@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app_bloc_cubit/cubit/weather_cubit.dart';
+import 'package:weather_app_bloc_cubit/bloc/weather_bloc.dart';
 import 'package:weather_app_bloc_cubit/data/model/weather.dart';
 
 class WeatherSearchPage extends StatefulWidget {
@@ -18,7 +18,7 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 16),
         alignment: Alignment.center,
-        child: BlocConsumer<WeatherCubit, WeatherState>(
+        child: BlocConsumer<WeatherBloc, WeatherState>(
           listener: (context, state) {
             if (state is WeatherError) {
               Scaffold.of(context).showSnackBar(
@@ -87,7 +87,12 @@ class CityInputField extends StatelessWidget {
   }
 
   void submitCityName(BuildContext context, String cityName) {
-    final weatherCubit = context.read<WeatherCubit>();
-    weatherCubit.getWeather(cityName);
+
+    // trigerring lint message Close instances of `dart.core.Sink`.
+    final weatherBloc = context.read<WeatherBloc>();
+    weatherBloc.add(GetWeather(cityName));
+
+    // use the classic approach
+    // BlocProvider.of<WeatherBloc>(context).add(GetWeather(cityName));
   }
 }
